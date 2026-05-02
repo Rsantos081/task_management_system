@@ -1,0 +1,12 @@
+[
+    {
+        "titulo": "Deploy",
+        "descrição": "Toda Terça-Feira",
+        "status": "Concluida"
+    },
+    {
+        "titulo": "Sprint",
+        "descrição": "De 1 a 4 semanas",
+        "status": "Concluida"
+    }
+]
