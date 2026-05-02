@@ -18,6 +18,12 @@ Este projeto é uma aplicação desktop simples de gerenciamento de tarefas (To-
 # Projeto
  - tarefas.json      # Banco de dados local
  - app.py            # Código principal da aplicação
+   
+# Como Executar
+1. Clone Repositorio = https://github.com/Rsantos081/To-Do-List
+2. cd To-Do-List.git
+3. python install customtkinter
+4. python app.py
 
 # Como funciona
 - As tarefas são armazenadas em uma lista de dicionários.
