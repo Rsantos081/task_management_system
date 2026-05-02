@@ -16,8 +16,8 @@ Este projeto é uma aplicação desktop simples de gerenciamento de tarefas (To-
 - OS (manipulação de arquivos)
 
 # Projeto
- ├── tarefas.json      # Banco de dados local
- └── app.py            # Código principal da aplicação
+ - tarefas.json      # Banco de dados local
+ - app.py            # Código principal da aplicação
 
 # Como funciona
 - As tarefas são armazenadas em uma lista de dicionários.
