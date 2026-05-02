@@ -28,8 +28,8 @@ Este projeto é uma aplicação desktop simples de gerenciamento de tarefas (To-
 # Como funciona
 - As tarefas são armazenadas em uma lista de dicionários.
 - Cada tarefa possui:
- Titulo
- Descrição
+ Titulo,
+ Descrição,
  Status (pendente ou concluída)
 - Os dados são salvos automaticamente no arquivo tarefas.json, garantindo persistência mesmo após  fechar o programa.
 
