@@ -69,41 +69,21 @@ def remover_tarefa():
     listar_tarefas()
           
 def editar_tarefa():
-    tarefa_buscar = campo_buscar.get().strip().lower()
-    
-    novo_titulo = campo_novo_titulo.get().strip()
-    nova_descricao = campo_novo_titulo.get().strip()
-    
-    tarefa_encontrada = True
-    
-    
+    tarefa_editar = campo_titulo.get().strip().lower()
     for tarefa in tarefas:
-        if tarefa['titulo'].strip().lower() == tarefa_buscar:        
-                tarefa_encontrada = True
-        if novo_titulo:
+        if tarefa ['titulo'] == tarefa_editar:
+            label_editar = ctk.CTkLabel(box,text="Tarefa Encontrada !!")
+            label_editar.pack()
+            
+            novo_titulo = campo_titulo.get()
+            nova_descriçao= campo_descricao.get()
+            
+            if novo_titulo:
                 tarefa['titulo'] = novo_titulo
-        if nova_descricao:
-                tarefa['descrição'] = nova_descricao
-        break    
-    
+            if nova_descriçao:
+                tarefa['descrição'] = nova_descriçao
     with open("tarefas.json", "w", encoding="utf-8") as arquivo:
-        json.dump(tarefas, arquivo, indent=4, ensure_ascii=False)
-    for widget in box.winfo_children():
-        widget.destroy()
-        
-    if tarefa_encontrada:
-        label_editar = ctk.CTkLabel(
-          box,
-          tetx='Tarefa editada com sucesso !!'
-        )            
-        label_editar.pack()
-    else:
-        label_editar = ctk.CTkLabel(
-            box,
-            text='Tarefa não encontrada'
-        )
-        label_editar.pack()
-    listar_tarefas()
+        json.dump(tarefas, arquivo, indent=4, ensure_ascii=False) 
     
 def marcar_como_concluida():
     tarefa_concluida = campo_titulo.get()
@@ -131,21 +111,6 @@ label_descricao.pack(pady=5)
 
 campo_descricao = ctk.CTkEntry(app,placeholder_text="Descrição Tarefa")
 campo_descricao.pack(pady=5)
-
-campo_buscar = ctk.CTkEntry(app,placeholder_text='Digite a tarefa')
-campo_buscar.pack(pady=5)
-
-label_novo_titulo = ctk.CTkLabel(app, text="Novo título")
-label_novo_titulo.pack(pady=5)
-
-campo_novo_titulo = ctk.CTkEntry(app, placeholder_text="Novo título")
-campo_novo_titulo.pack(pady=5)
-
-label_nova_descricao = ctk.CTkLabel(app, text="Nova descrição")
-label_nova_descricao.pack(pady=5)
-
-campo_nova_descricao = ctk.CTkEntry(app, placeholder_text="Nova descrição")
-campo_nova_descricao.pack(pady=5)
 
 botao = ctk.CTkButton(app,text='Adicionar', command= adicionar_tarefa)
 botao.pack(pady=5)
