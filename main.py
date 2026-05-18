@@ -69,24 +69,42 @@ def remover_tarefa():
     listar_tarefas()
           
 def editar_tarefa():
-    tarefa_editar = campo_titulo.get()
+    tarefa_buscar = campo_buscar.get().strip().lower()
+    
+    novo_titulo = campo_novo_titulo.get().strip()
+    nova_descricao = campo_novo_titulo.get().strip()
+    
+    tarefa_encontrada = True
+    
+    
     for tarefa in tarefas:
-        if tarefa['titulo'] == tarefa_editar:
-            label_editar = ctk.CTkLabel(box,text="Tarefa Encontrada !!")
-            label_editar.pack()
-            
-            novo_titulo = campo_titulo.get()
-            nova_descricao = campo_descricao.get()
-            
-            if novo_titulo:
+        if tarefa['titulo'].strip().lower() == tarefa_buscar:        
+                tarefa_encontrada = True
+        if novo_titulo:
                 tarefa['titulo'] = novo_titulo
-            
-            if nova_descricao:
+        if nova_descricao:
                 tarefa['descrição'] = nova_descricao
-                
-            with open("tarefas.json", "w", encoding="utf-8") as arquivo:
-                json.dump(tarefas, arquivo, indent=4, ensure_ascii=False)
-                
+        break    
+    
+    with open("tarefas.json", "w", encoding="utf-8") as arquivo:
+        json.dump(tarefas, arquivo, indent=4, ensure_ascii=False)
+    for widget in box.winfo_children():
+        widget.destroy()
+        
+    if tarefa_encontrada:
+        label_editar = ctk.CTkLabel(
+          box,
+          tetx='Tarefa editada com sucesso !!'
+        )            
+        label_editar.pack()
+    else:
+        label_editar = ctk.CTkLabel(
+            box,
+            text='Tarefa não encontrada'
+        )
+        label_editar.pack()
+    listar_tarefas()
+    
 def marcar_como_concluida():
     tarefa_concluida = campo_titulo.get()
     for tarefa in tarefas:
@@ -95,46 +113,55 @@ def marcar_como_concluida():
             
     with open("tarefas.json", "w", encoding="utf-8") as arquivo:
                 json.dump(tarefas, arquivo, indent=4, ensure_ascii=False)
-## Interface
               
 # Criaçao da Janela Principal
 app = ctk.CTk()
 app.title('Sistema To-Do List')
 app.geometry('300x300')
 
-# Label 01
+
 label_titulo= ctk.CTkLabel(app,text='Titulo')
 label_titulo.pack(pady=5)
-# Entry 01
+
 campo_titulo = ctk.CTkEntry(app,placeholder_text='Digite sua Tarefa')
 campo_titulo.pack(pady=5)
-# label 02
+
 label_descricao= ctk.CTkLabel(app,text='Descrição')
 label_descricao.pack(pady=5)
-# Entry 02
+
 campo_descricao = ctk.CTkEntry(app,placeholder_text="Descrição Tarefa")
 campo_descricao.pack(pady=5)
-# Button
+
+campo_buscar = ctk.CTkEntry(app,placeholder_text='Digite a tarefa')
+campo_buscar.pack(pady=5)
+
+label_novo_titulo = ctk.CTkLabel(app, text="Novo título")
+label_novo_titulo.pack(pady=5)
+
+campo_novo_titulo = ctk.CTkEntry(app, placeholder_text="Novo título")
+campo_novo_titulo.pack(pady=5)
+
+label_nova_descricao = ctk.CTkLabel(app, text="Nova descrição")
+label_nova_descricao.pack(pady=5)
+
+campo_nova_descricao = ctk.CTkEntry(app, placeholder_text="Nova descrição")
+campo_nova_descricao.pack(pady=5)
+
 botao = ctk.CTkButton(app,text='Adicionar', command= adicionar_tarefa)
 botao.pack(pady=5)
-# Button 02
+
 botao_listar = ctk.CTkButton(app,text='Listar',command=listar_tarefas)
 botao_listar.pack(pady=5)
-# Button 03
+
 botao_remover = ctk.CTkButton(app,text='Remover',command=remover_tarefa)
 botao_remover.pack(pady=5)
-# Button Edit 
+
 botao_editar = ctk.CTkButton(app,text='Editar',command=editar_tarefa)
 botao_editar.pack(pady=5)
-# Button Conclude
+
 botao_concluir = ctk.CTkButton(app,text='Concluir',command=marcar_como_concluida)
 botao_concluir.pack(pady=5)
-#ListBox
+#List Box
 box = ctk.CTkScrollableFrame(app,label_text="Lista de Tarefas")
 box.pack(pady=5)
-
 app.mainloop() 
-
-        
-       
-        
