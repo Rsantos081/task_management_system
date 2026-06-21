@@ -109,13 +109,4 @@ Uma janela de **300x300** será aberta com os campos de título e descrição, o
 
 ---
 
-## 🚧 Possíveis Melhorias
-
-- [ ] Padronizar a forma de busca de tarefas (usar `.strip().lower()` em todas as funções — adicionar, remover, editar e concluir).
-- [ ] Validar campos vazios antes de adicionar uma tarefa (hoje é possível criar tarefas sem título ou descrição).
-- [ ] Impedir tarefas duplicadas com o mesmo título.
-- [ ] Adicionar confirmação visual ao adicionar/editar uma tarefa (hoje só "Remover" e "Editar" dão algum feedback na tela).
-- [ ] Permitir desfazer a marcação de "Concluida" (voltar para "pendente").
-- [ ] Aumentar o tamanho da janela dinamicamente conforme a quantidade de tarefas listadas.
-- [ ] Adicionar um arquivo `requirements.txt` para facilitar a instalação de dependências.
 
