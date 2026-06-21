@@ -71,19 +71,24 @@ def remover_tarefa():
 def editar_tarefa():
     tarefa_editar = campo_titulo.get().strip().lower()
     for tarefa in tarefas:
-        if tarefa ['titulo'] == tarefa_editar:
-            label_editar = ctk.CTkLabel(box,text="Tarefa Encontrada !!")
-            label_editar.pack()
-            
-            novo_titulo = campo_titulo.get()
-            nova_descriçao= campo_descricao.get()
-            
-            if novo_titulo:
-                tarefa['titulo'] = novo_titulo
-            if nova_descriçao:
-                tarefa['descrição'] = nova_descriçao
-    with open("tarefas.json", "w", encoding="utf-8") as arquivo:
-        json.dump(tarefas, arquivo, indent=4, ensure_ascii=False) 
+        if tarefa ['titulo'].strip().lower() == tarefa_editar:
+           nova_descricao = campo_descricao.get()
+           
+           if nova_descricao:
+               tarefa['descrição'] = nova_descricao
+                
+           with open("tarefas.json", "w", encoding="utf-8") as arquivo:
+               json.dump(tarefas, arquivo, indent=4, ensure_ascii=False)
+                
+           for widget in box.winfo_children():
+                widget.destroy()    
+           label_editar = ctk.CTkLabel(box, text='Tarefa editada com sucesso!')
+           label_editar.pack()
+           listar_tarefas()
+           return
+    for widget in box.winfo_children():
+        widget.destroy()
+    ctk.CTkLabel(box, text="Tarefa não encontrada.").pack()
     
 def marcar_como_concluida():
     tarefa_concluida = campo_titulo.get()
