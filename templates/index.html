@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gerenciador de Tarefas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="wrap">
+
+  <div class="topbar">
+    <button class="btn btn-ghost" id="refresh-btn">Atualizar lista</button>
+  </div>
+
+  <h1 class="title">Gerenciador de Tarefas</h1>
+  <p class="subtitle">Interface conectada as rotas da sua API REST.</p>
+
+  <div class="panels">
+
+    <section class="panel">
+      <h2 class="panel-title">Nova tarefa</h2>
+
+      <form id="add-form">
+        <div class="field">
+          <label for="titulo">Titulo</label>
+          <input type="text" id="titulo" maxlength="99" placeholder="Ex: Estudar Flask" required>
+        </div>
+        <div class="field">
+          <label for="descricao">Descricao</label>
+          <textarea id="descricao" maxlength="99" placeholder="Detalhes da tarefa" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Adicionar tarefa</button>
+      </form>
+    </section>
+
+    <section class="panel">
+      <h2 class="panel-title">Lista de tarefas</h2>
+
+      <p id="status-msg"></p>
+
+      <div class="task-list" id="task-list">
+        <div class="empty">Nenhuma tarefa cadastrada ainda.</div>
+      </div>
+    </section>
+
+  </div>
+
+</div>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
