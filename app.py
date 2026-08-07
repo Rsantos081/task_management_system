@@ -8,8 +8,8 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///tarefa.db'
 app.config ['SECRET_KEY'] = os.getenv('SECRET_KEY')
 
-db = SQLAlchemy(app)
 login_manager = LoginManager()
+db = SQLAlchemy(app)
 login_manager.init_app(app)
 login_manager.login_view = "login"
 

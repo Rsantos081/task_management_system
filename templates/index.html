@@ -6,23 +6,78 @@
 <title>Gerenciador de Tarefas</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div class="wrap">
+<!-- Tela de login / cadastro -->
+<div class="login-wrap" id="login-wrap">
+  <div class="login-box">
+    <span class="badge">FLASK API</span>
+    <h1 class="login-title">Acesse sua conta</h1>
+    <p class="login-subtitle">Entre ou cadastre-se para gerenciar suas tarefas.</p>
+
+    <div class="login-tabs">
+      <button class="login-tab active" id="tab-login" type="button">Entrar</button>
+      <button class="login-tab" id="tab-register" type="button">Cadastrar</button>
+    </div>
+
+    <!-- Formulário de login -->
+    <form class="credentials-form active" id="login-form">
+      <div class="field">
+        <label for="login-nome">Nome de usuário</label>
+        <input type="text" id="login-nome" placeholder="Ex: ruan" required>
+      </div>
+      <div class="field">
+        <label for="login-senha">Senha</label>
+        <div class="password-field">
+          <input type="password" id="login-senha" placeholder="Sua senha" required>
+          <button type="button" class="toggle-password" data-target="login-senha">mostrar</button>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary">Entrar</button>
+    </form>
+
+    <!-- Formulário de cadastro -->
+    <form class="credentials-form" id="register-form">
+      <div class="field">
+        <label for="register-nome">Nome de usuário</label>
+        <input type="text" id="register-nome" placeholder="Escolha um nome" required>
+      </div>
+      <div class="field">
+        <label for="register-senha">Senha</label>
+        <div class="password-field">
+          <input type="password" id="register-senha" placeholder="Escolha uma senha" required>
+          <button type="button" class="toggle-password" data-target="register-senha">mostrar</button>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary">Cadastrar</button>
+    </form>
+
+    <p id="login-msg"></p>
+  </div>
+</div>
+
+<!-- App principal (só aparece depois do login) -->
+<div class="wrap" id="app-wrap" style="display:none;">
 
   <div class="topbar">
-    <button class="btn btn-ghost" id="refresh-btn">Atualizar lista</button>
+    <span class="badge">FLASK API</span>
+    <div class="user-bar">
+      <span class="user-name">Logado como <strong id="user-name-display"></strong></span>
+      <button class="btn btn-ghost" id="logout-btn">Sair</button>
+      <button class="btn btn-ghost" id="refresh-btn">Atualizar lista</button>
+    </div>
   </div>
 
   <h1 class="title">Gerenciador de Tarefas</h1>
-   <br> <br/>
+ <br></br>
 
   <div class="panels">
 
     <section class="panel">
       <h2 class="panel-title">Nova tarefa</h2>
+      <span class="route">POST /api/tasks/add</span>
 
       <form id="add-form">
         <div class="field">
@@ -39,6 +94,7 @@
 
     <section class="panel">
       <h2 class="panel-title">Lista de tarefas</h2>
+      <span class="route">GET /api/tasks/&lt;id&gt;</span>
 
       <p id="status-msg"></p>
 
@@ -51,6 +107,6 @@
 
 </div>
 
-<script src="{{ url_for('static', filename='script.js') }}"></script>
+<script src="script.js"></script>
 </body>
 </html>
