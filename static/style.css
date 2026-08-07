@@ -100,7 +100,7 @@ body{
   margin-bottom: 6px;
 }
 
-input[type=text], textarea{
+input[type=text], input[type=password], textarea{
   width: 100%;
   background: var(--card);
   border: 1px solid var(--card-line);
@@ -114,7 +114,7 @@ input[type=text], textarea{
 
 textarea{ min-height: 90px; }
 
-input[type=text]:focus, textarea:focus{
+input[type=text]:focus, input[type=password]:focus, textarea:focus{
   outline: none;
   border-color: var(--accent);
 }
@@ -249,7 +249,7 @@ input[type=text]:focus, textarea:focus{
   margin-top: 10px;
 }
 
-
+/* ---------- Login / Credenciais ---------- */
 .login-wrap{
   min-height: 100vh;
   display:flex;
@@ -320,7 +320,7 @@ input[type=text]:focus, textarea:focus{
   font-size: 13px;
 }
 
-
+/* input de senha com ícone de olho pra mostrar/ocultar */
 .password-field{
   position: relative;
 }
@@ -360,7 +360,6 @@ input[type=text]:focus, textarea:focus{
 
 #login-msg.error{ color: var(--danger); }
 #login-msg.success{ color: var(--accent); }
-
 
 .user-bar{
   display:flex;

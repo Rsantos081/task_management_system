@@ -6,7 +6,7 @@
 <title>Gerenciador de Tarefas</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
 
@@ -62,7 +62,6 @@
 <div class="wrap" id="app-wrap" style="display:none;">
 
   <div class="topbar">
-    <span class="badge">FLASK API</span>
     <div class="user-bar">
       <span class="user-name">Logado como <strong id="user-name-display"></strong></span>
       <button class="btn btn-ghost" id="logout-btn">Sair</button>
@@ -77,8 +76,8 @@
 
     <section class="panel">
       <h2 class="panel-title">Nova tarefa</h2>
-      <span class="route">POST /api/tasks/add</span>
-
+      <br></br>
+   
       <form id="add-form">
         <div class="field">
           <label for="titulo">Titulo</label>
@@ -94,7 +93,7 @@
 
     <section class="panel">
       <h2 class="panel-title">Lista de tarefas</h2>
-      <span class="route">GET /api/tasks/&lt;id&gt;</span>
+      <br></br>
 
       <p id="status-msg"></p>
 
@@ -107,6 +106,6 @@
 
 </div>
 
-<script src="script.js"></script>
+<script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
