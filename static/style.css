@@ -249,6 +249,134 @@ input[type=text]:focus, textarea:focus{
   margin-top: 10px;
 }
 
+
+.login-wrap{
+  min-height: 100vh;
+  display:flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.login-box{
+  width: 100%;
+  max-width: 380px;
+  background: var(--panel);
+  border: 1px solid var(--card-line);
+  border-radius: var(--radius);
+  padding: 32px 28px;
+}
+
+.login-box .badge{
+  display:block;
+  margin-bottom: 16px;
+}
+
+.login-title{
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0 0 4px;
+}
+
+.login-subtitle{
+  color: var(--muted);
+  font-size: 14px;
+  margin: 0 0 24px;
+}
+
+/* alterna entre os formulários de login e cadastro */
+.login-tabs{
+  display:flex;
+  gap: 6px;
+  margin-bottom: 22px;
+  background: var(--card);
+  border: 1px solid var(--card-line);
+  border-radius: 6px;
+  padding: 4px;
+}
+
+.login-tab{
+  flex: 1;
+  text-align: center;
+  padding: 8px 0;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.login-tab.active{
+  background: var(--accent);
+  color: #fff;
+}
+
+.credentials-form{ display:none; }
+.credentials-form.active{ display:block; }
+
+.credentials-form .field label{
+  font-size: 13px;
+}
+
+
+.password-field{
+  position: relative;
+}
+
+.password-field input{
+  padding-right: 42px;
+}
+
+.toggle-password{
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 13px;
+  padding: 4px 6px;
+}
+
+.toggle-password:hover{ color: var(--ink); }
+
+.credentials-form .btn-primary{
+  width: 100%;
+  margin-top: 4px;
+}
+
+#login-msg{
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  color: var(--muted);
+  min-height: 16px;
+  margin: 14px 0 0;
+  text-align: center;
+}
+
+#login-msg.error{ color: var(--danger); }
+#login-msg.success{ color: var(--accent); }
+
+
+.user-bar{
+  display:flex;
+  align-items:center;
+  gap: 10px;
+}
+
+.user-bar .user-name{
+  font-size: 13px;
+  color: var(--ink-dim);
+}
+
+.user-bar .user-name strong{
+  color: var(--ink);
+}
+
 @media (prefers-reduced-motion: reduce){
   *{ transition: none !important; }
 }

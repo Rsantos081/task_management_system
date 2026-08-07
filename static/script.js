@@ -129,7 +129,7 @@ addForm.addEventListener('submit', async (e) => {
     }
   } catch(err){
     showStatus('Erro de conexão com a API.', true);
-  }
+  }   
 });
 
 refreshBtn.addEventListener('click', loadTasks);
