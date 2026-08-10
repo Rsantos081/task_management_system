@@ -98,7 +98,7 @@ def add_tasks():
 def remove_tasks(id):
     tarefa = Tarefas.query.filter_by(id=id, usuario_id = current_user.id).first()
     if tarefa:
-        db.session.delete(id)
+        db.session.delete(tarefa)
         db.session.commit()
         return jsonify ({"mensagem":"Tarefa removida com sucesso"})
     return jsonify ({"mensagem":"Tarefa não encontrada Id invalido"}), 400
