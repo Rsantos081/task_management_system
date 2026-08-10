@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify, render_template
 from flask_sqlalchemy import SQLAlchemy
-from flask_login import UserMixin,login_user,LoginManager,login_required,logout_user
+from flask_login import UserMixin,login_user,LoginManager,login_required,logout_user,current_user
 import os
 
 
@@ -13,20 +13,24 @@ db = SQLAlchemy(app)
 login_manager.init_app(app)
 login_manager.login_view = "login"
 
+
+
+class Usuario(db.Model,UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    nome = db.Column(db.String(255), nullable=False, unique=True)
+    senha = db.Column(db.String(100), nullable=False)
+    tarefas = db.relationship('Tarefas', backref='usuario', lazy=True)
+    
 class Tarefas(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     titulo = db.Column(db.String(99), nullable=False)
     descricao = db.Column(db.String(99), nullable=False)
     status = db.Column(db.Boolean, default=False)
-    
-class Usuario(db.Model,UserMixin):
-    id = db.Column(db.Integer, primary_key=True)
-    nome = db.Column(db.String(255), nullable=False, unique=True)
-    senha = db.Column(db.String(100), nullable=False)
+    usuario_id = db.Column(db.Integer, db.ForeignKey('usuario.id'), nullable = False)
     
 @login_manager.user_loader
-def load_user(user_id):
-    return Usuario.query.get(int(user_id))
+def load_user(usuario_id):
+    return Usuario.query.get(int(usuario_id))
    
 @app.route('/')
 def home():
@@ -60,13 +64,30 @@ def register():
         db.session.commit()
         return jsonify ({"mensagem":"Usuario Cadastrado com Sucesso"}), 200
     return jsonify ({"mensagem":"Dados Invalidos do Usuario"}), 400
-        
+
+@app.route('/api/tasks', methods=['GET'])
+@login_required
+def  list_all_tasks():
+    tarefas = Tarefas.query.filter_by(usuario_id=current_user.id).all()
+    return jsonify([
+        {
+        "id": t.id,
+        "titulo": t.titulo,
+        "descricao":t.descricao,
+        "status": t.status
+       } for t in tarefas    
+    ]) 
+          
 @app.route('/api/tasks/add', methods = ['POST'])
 @login_required
 def add_tasks():
     data = request.json
     if 'titulo' in data and 'descricao' in data:
-        tasks = Tarefas(titulo=data["titulo"],descricao=data["descricao"])
+        tasks = Tarefas(
+            titulo=data["titulo"],
+            descricao=data["descricao"],
+            usuario_id = current_user.id    
+        )
         db.session.add(tasks)
         db.session.commit()
         return jsonify ({"mensagem":"Tarefa adicionada com sucesso"})
@@ -75,8 +96,8 @@ def add_tasks():
 @app.route('/api/tasks/delete/<int:id>', methods = ['DELETE'])
 @login_required  
 def remove_tasks(id):
-    id = Tarefas.query.get(id)
-    if id:
+    tarefa = Tarefas.query.filter_by(id=id, usuario_id = current_user.id).first()
+    if tarefa:
         db.session.delete(id)
         db.session.commit()
         return jsonify ({"mensagem":"Tarefa removida com sucesso"})
@@ -85,21 +106,21 @@ def remove_tasks(id):
 @app.route('/api/tasks/<int:id>', methods = ['GET'])
 @login_required
 def list_tasks(id):
-    id = Tarefas.query.get(id)
-    if id:
+    tarefa = Tarefas.query.filter_by(id=id,usuario_id=current_user.id).first()
+    if tarefa:
         return jsonify({
-            "id":id.id,
-            "titulo":id.titulo,
-            "descricao":id.descricao,
-            "status":id.status
+            "id":tarefa.id,
+            "titulo":tarefa.titulo,
+            "descricao":tarefa.descricao,
+            "status":tarefa.status
         })
     return jsonify({"mensagem":"Tarefa não enontrado"}), 404
 
 @app.route('/api/tasks/update/<int:id>', methods = ['PUT'])
 @login_required
 def update_tasks(id):
-    id = Tarefas.query.get(id)
-    if not id:
+    tarefa = Tarefas.query.filter_by(id=id, usuario_id = current_user.id).first()
+    if not tarefa:
         return jsonify ({"mensagem":"Tarefa não encontrada"}), 404
     data = request.json
     
@@ -117,7 +138,7 @@ def update_tasks(id):
 @app.route('/api/tasks/<int:id>/completed', methods = ['PATCH'])
 @login_required
 def mark_task_completed(id):
-    tarefa = Tarefas.query.get(id)
+    tarefa = Tarefas.query.filter_by(id=id,usuario_id=current_user.id).first()
     if not tarefa:
         return jsonify ({"mensagem":"Tarefa não encontrada"}), 404
     data = request.json
@@ -126,7 +147,7 @@ def mark_task_completed(id):
         tarefa.status = data['status']
     else:
         tarefa.status = True
-    
+        
     db.session.commit()
     return jsonify({
         "mensagem":"Tarefa atulizada com sucesso",
