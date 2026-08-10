@@ -1,4 +1,4 @@
-# Gerenciamento de Tarewfas
+# Gerenciamento de Tarefas
 
 Sistema de gerenciamento de tarefas (to-do list) com autenticação de usuários, feito em **Flask** + **SQLAlchemy** + **Flask-Login**. Cada usuário só visualiza e gerencia as próprias tarefas.
 

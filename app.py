@@ -125,13 +125,13 @@ def update_tasks(id):
     data = request.json
     
     if 'titulo' in data:
-        id.titulo = data['titulo']
+        tarefa.titulo = data['titulo']
         
     if 'descricao' in data:
-        id.descricao = data['descricao']
+        tarefa.descricao = data['descricao']
         
     if 'status' in data:
-        id.status = data['status']
+        tarefa.status = data['status']
     db.session.commit()
     return jsonify({"mensagem":"Tarefa atualizada com sucesso"})
         
