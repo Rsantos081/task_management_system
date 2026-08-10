@@ -1,107 +1,155 @@
-# Gerenciador de Tarefas
+# Gerenciamento de Tarewfas
 
-Aplicação web para gerenciamento de tarefas (to-do list), construída com **Flask** no back-end e **HTML, CSS e JavaScript puro** no front-end, com autenticação de usuário via **Flask-Login**.
+Sistema de gerenciamento de tarefas (to-do list) com autenticação de usuários, feito em **Flask** + **SQLAlchemy** + **Flask-Login**. Cada usuário só visualiza e gerencia as próprias tarefas.
+
+## Tecnologias
+
+- Python 3
+- Flask
+- Flask-SQLAlchemy (ORM)
+- Flask-Login (autenticação e sessão de usuário)
+- SQLite (banco de dados)
+- JavaScript, HTML e CSS (Interface do Usuario)
 
 ## Funcionalidades
 
 - Cadastro de usuário
 - Login e logout com sessão
-- Adicionar tarefa (título e descrição)
-- Listar tarefas
-- Editar título/descrição de uma tarefa
-- Marcar tarefa como concluída ou pendente
-- Excluir tarefa
+- Criação, listagem, atualização e remoção de tarefas
+- Marcar tarefa como concluída
+- Tarefas isoladas por usuário (cada usuário só acessa as suas)
 
-## Tecnologias utilizadas
+## Estrutura do banco de dados
 
-- [Flask](https://flask.palletsprojects.com/) — framework web em Python
-- [Flask-SQLAlchemy](https://flask-sqlalchemy.palletsprojects.com/) — ORM para o banco de dados
-- [Flask-Login](https://flask-login.readthedocs.io/) — gerenciamento de sessão e autenticação
-- SQLite — banco de dados
-- HTML, CSS e JavaScript (Vanilla) — interface do usuário
+**Usuario**
+| Campo | Tipo | Descrição |
+|---|---|---|
+| id | Integer | Chave primária |
+| nome | String(255) | Nome de usuário (único) |
+| senha | String(100) | Senha do usuário |
 
-## Estrutura do projeto
+**Tarefas**
+| Campo | Tipo | Descrição |
+|---|---|---|
+| id | Integer | Chave primária |
+| titulo | String(99) | Título da tarefa |
+| descricao | String(99) | Descrição da tarefa |
+| status | Boolean | Se a tarefa está concluída |
+| usuario_id | Integer (FK) | Usuário dono da tarefa |
+
+## Estrutura de pastas
 
 ```
-daily_list_system/
-├── app.py
-├── tarefa.db
+Task_management_system/
+│
+├── app.py                 # Aplicação principal: models, rotas e configuração do Flask
+├── instance/
+│   └── tarefa.db           # Banco de dados SQLite (gerado automaticamente na 1ª execução)
+├── static/
+│   ├── script.js            # JavaScript do front-end
+│   └── style.css            # Estilos do front-end
 ├── templates/
-│   └── index.html
-└── static/
-    ├── style.css
-    └── script.js
+│   └── index.html           # Página inicial renderizada pela rota "/"
+├── .gitignore
+└── README.md
 ```
 
-## Como executar o projeto
+> **Sobre a pasta `instance/`:** como a `SQLALCHEMY_DATABASE_URI` está configurada como `sqlite:///tarefa.db` (caminho relativo), o Flask cria o banco automaticamente dentro de uma pasta especial chamada `instance/`, e não na raiz do projeto. Isso é um comportamento padrão do Flask para separar arquivos "de instância" (configs locais, banco de dados) do código-fonte versionado. Por isso, se for apagar o banco para recriar o schema, o comando correto é:
+> ```powershell
+> Remove-Item .\instance\tarefa.db
+> ```
 
-### 1. Pré-requisitos
+## Instalação
 
-- Python 3 instalado
+### 1. Clone o repositório e entre na pasta do projeto
 
-### 2. Instalar as dependências
+```bash
+git clone <url-do-repositorio>
+cd daily_list_system
+```
+
+### 2. Crie um ambiente virtual (opcional, mas recomendado)
+
+```bash
+python -m venv venv
+```
+
+Ativar no Windows (PowerShell):
+```powershell
+.\venv\Scripts\Activate.ps1
+```
+
+Ativar no Linux/Mac:
+```bash
+source venv/bin/activate
+```
+
+### 3. Instale as dependências
 
 ```bash
 pip install flask flask-sqlalchemy flask-login
 ```
 
-### 3. Rodar a aplicação
+### 4. Configure a variável de ambiente `SECRET_KEY`
+
+No PowerShell:
+```powershell
+$env:SECRET_KEY = "uma-chave-secreta-qualquer"
+```
+
+No Linux/Mac:
+```bash
+export SECRET_KEY="uma-chave-secreta-qualquer"
+```
+
+### 5. Rode o projeto
 
 ```bash
 python app.py
 ```
 
-O banco de dados (`tarefa.db`) é criado automaticamente na primeira execução.
+O banco `tarefa.db` é criado automaticamente na primeira execução. A aplicação sobe em `http://127.0.0.1:5000`.
 
-### 4. Acessar
+> ⚠️ Se você alterar a estrutura de alguma tabela (adicionar/remover coluna) depois que o banco já existir, `db.create_all()` **não atualiza** tabelas já existentes. Apague o `tarefa.db` e rode `python app.py` de novo para recriá-lo do zero (isso apaga os dados).
 
-Abra o navegador em:
+## Endpoints da API
 
-```
-http://127.0.0.1:5000
-```
-
-## Rotas da API
-
-### Usuário
+### Autenticação
 
 | Método | Rota | Descrição |
 |---|---|---|
-| POST | `/api/register` | Cadastra um novo usuário |
+| POST | `/api/register/` | Cadastra um novo usuário |
 | POST | `/api/login` | Autentica o usuário e inicia a sessão |
 | POST | `/api/logout` | Encerra a sessão do usuário |
 
+**Exemplo de body — registro/login:**
+```json
+{
+  "nome": "ruant",
+  "senha": "123456"
+}
+```
+
 ### Tarefas
+*(todas exigem estar logado — envie o cookie de sessão obtido no login)*
 
 | Método | Rota | Descrição |
 |---|---|---|
-| POST | `/api/tasks/add` | Adiciona uma nova tarefa |
-| GET | `/api/tasks/<id>` | Retorna os dados de uma tarefa específica |
-| PUT | `/api/tasks/update/<id>` | Atualiza título, descrição e/ou status de uma tarefa |
-| PATCH | `/api/tasks/<id>/completed` | Marca uma tarefa como concluída ou pendente |
+| GET | `/api/tasks` | Lista todas as tarefas do usuário logado |
+| GET | `/api/tasks/<id>` | Detalha uma tarefa específica |
+| POST | `/api/tasks/add` | Cria uma nova tarefa |
+| PUT | `/api/tasks/update/<id>` | Atualiza título, descrição e/ou status |
+| PATCH | `/api/tasks/<id>/completed` | Marca a tarefa como concluída |
 | DELETE | `/api/tasks/delete/<id>` | Remove uma tarefa |
 
-Todas as rotas de tarefas exigem que o usuário esteja autenticado.
-
-### Exemplo de requisição
-
-**Adicionar tarefa**
+**Exemplo de body — criar tarefa:**
 ```json
-POST /api/tasks/add
 {
-  "titulo": "Estudar Flask",
-  "descricao": "Revisar rotas e templates"
+  "titulo": "Deploy",
+  "descricao": "Toda Segunda-Feira"
 }
 ```
 
-**Resposta**
-```json
-{
-  "mensagem": "Tarefa adicionada com sucesso"
-}
-```
+## Segurança e isolamento por usuário
 
-## Como funciona o front-end
-
-O `script.js` se comunica com as rotas do `app.py` usando `fetch()`. Cada ação do usuário na interface (adicionar, editar, concluir ou excluir tarefa) dispara uma requisição HTTP para a rota correspondente da API, que responde em formato JSON e atualiza a tela.
-
+Toda tarefa é vinculada ao usuário que a criou através da coluna `usuario_id`. As rotas usam `current_user` (fornecido pelo Flask-Login) para filtrar as consultas, garantindo que um usuário não visualize, edite ou apague tarefas de outro usuário.
