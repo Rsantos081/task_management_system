@@ -1,155 +1,134 @@
-# Gerenciamento de Tarefas
+# Gerenciador de Tarefas
 
-Sistema de gerenciamento de tarefas (to-do list) com autenticação de usuários, feito em **Flask** + **SQLAlchemy** + **Flask-Login**. Cada usuário só visualiza e gerencia as próprias tarefas.
+Aplicação web para gerenciamento de tarefas (to-do list), construída com **Flask** no back-end e **HTML, CSS e JavaScript puro** no front-end, com autenticação de usuário via **Flask-Login**.
 
-## Tecnologias
-
-- Python 3
-- Flask
-- Flask-SQLAlchemy (ORM)
-- Flask-Login (autenticação e sessão de usuário)
-- SQLite (banco de dados)
-- JavaScript, HTML e CSS (Interface do Usuario)
+Organizada com **Flask Blueprints**: cada domínio (autenticação e tarefas) vive em seu próprio módulo, registrado por uma application factory (`create_app`).
 
 ## Funcionalidades
 
 - Cadastro de usuário
 - Login e logout com sessão
-- Criação, listagem, atualização e remoção de tarefas
-- Marcar tarefa como concluída
-- Tarefas isoladas por usuário (cada usuário só acessa as suas)
+- Adicionar tarefa (título e descrição)
+- Listar tarefas
+- Editar título/descrição de uma tarefa
+- Marcar tarefa como concluída ou pendente
+- Excluir tarefa
 
-## Estrutura do banco de dados
+## Tecnologias utilizadas
 
-**Usuario**
-| Campo | Tipo | Descrição |
-|---|---|---|
-| id | Integer | Chave primária |
-| nome | String(255) | Nome de usuário (único) |
-| senha | String(100) | Senha do usuário |
+- [Flask](https://flask.palletsprojects.com/) — framework web em Python
+- [Flask-SQLAlchemy](https://flask-sqlalchemy.palletsprojects.com/) — ORM para o banco de dados
+- [Flask-Login](https://flask-login.readthedocs.io/) — gerenciamento de sessão e autenticação
+- SQLite — banco de dados
+- HTML, CSS e JavaScript (Vanilla) — interface do usuário
 
-**Tarefas**
-| Campo | Tipo | Descrição |
-|---|---|---|
-| id | Integer | Chave primária |
-| titulo | String(99) | Título da tarefa |
-| descricao | String(99) | Descrição da tarefa |
-| status | Boolean | Se a tarefa está concluída |
-| usuario_id | Integer (FK) | Usuário dono da tarefa |
-
-## Estrutura de pastas
-
+## Estrutura do projeto
 ```
-Task_management_system/
+task_management_system/
+├── run.py # ponto de entrada: cria a app e roda
+├── requirements.txt
+├── app/
+│ ├── init.py # application factory (create_app), registra os blueprints
+│ ├── extensions.py # instâncias soltas: db, login_manager
+│ ├── models.py # models Usuario e Tarefas
+│ │
+│ ├── auth/ # domínio: autenticação
+│ │ ├── init.py # auth_bp = Blueprint("auth", name, url_prefix="/api")
+│ │ └── routes.py # /api/login, /api/register, /api/logout
+│ │
+│ ├── main/ # domínio: página inicial
+│ │ ├── init.py # main_bp = Blueprint("main", name)
+│ │ └── routes.py # /
+│ │
+│ └── tasks/ # domínio: tarefas
+│ ├── init.py # tasks_bp = Blueprint("tasks", name, url_prefix="/api/tasks")
+│ └── routes.py # /, /add, /<id>, /update/<id>, /delete/<id>, /<id>/completed
 │
-├── app.py                 # Aplicação principal: models, rotas e configuração do Flask
-├── instance/
-│   └── tarefa.db           # Banco de dados SQLite (gerado automaticamente na 1ª execução)
-├── static/
-│   ├── script.js            # JavaScript do front-end
-│   └── style.css            # Estilos do front-end
 ├── templates/
-│   └── index.html           # Página inicial renderizada pela rota "/"
-├── .gitignore
-└── README.md
+│ └── index.html
+├── static/
+│ ├── style.css
+│ └── script.js
+└── instance/
+└── tarefa.db # criado automaticamente na primeira execução`
 ```
+## Como executar o projeto
 
-> **Sobre a pasta `instance/`:** como a `SQLALCHEMY_DATABASE_URI` está configurada como `sqlite:///tarefa.db` (caminho relativo), o Flask cria o banco automaticamente dentro de uma pasta especial chamada `instance/`, e não na raiz do projeto. Isso é um comportamento padrão do Flask para separar arquivos "de instância" (configs locais, banco de dados) do código-fonte versionado. Por isso, se for apagar o banco para recriar o schema, o comando correto é:
-> ```powershell
-> Remove-Item .\instance\tarefa.db
-> ```
+### 1. Pré-requisitos
 
-## Instalação
+- Python 3 instalado
 
-### 1. Clone o repositório e entre na pasta do projeto
+### 2. Instalar as dependências
 
 ```bash
-git clone <url-do-repositorio>
-cd daily_list_system
+pip install -r requirements.txt
 ```
 
-### 2. Crie um ambiente virtual (opcional, mas recomendado)
+### 3. Definir a variável de ambiente SECRET_KEY
 
 ```bash
-python -m venv venv
+export SECRET_KEY="troque-por-uma-chave-secreta"   # Linux/macOS
+set SECRET_KEY=troque-por-uma-chave-secreta         # Windows (cmd)
 ```
 
-Ativar no Windows (PowerShell):
-```powershell
-.\venv\Scripts\Activate.ps1
-```
-
-Ativar no Linux/Mac:
-```bash
-source venv/bin/activate
-```
-
-### 3. Instale as dependências
+### 4. Rodar a aplicação
 
 ```bash
-pip install flask flask-sqlalchemy flask-login
+python run.py
 ```
 
-### 4. Configure a variável de ambiente `SECRET_KEY`
+O banco de dados (`instance/tarefa.db`) é criado automaticamente na primeira execução.
 
-No PowerShell:
-```powershell
-$env:SECRET_KEY = "uma-chave-secreta-qualquer"
-```
+### 5. Acessar
 
-No Linux/Mac:
-```bash
-export SECRET_KEY="uma-chave-secreta-qualquer"
-```
+Abra o navegador em: http://127.0.0.1:5000
 
-### 5. Rode o projeto
+## Rotas da API
 
-```bash
-python app.py
-```
-
-O banco `tarefa.db` é criado automaticamente na primeira execução. A aplicação sobe em `http://127.0.0.1:5000`.
-
-> ⚠️ Se você alterar a estrutura de alguma tabela (adicionar/remover coluna) depois que o banco já existir, `db.create_all()` **não atualiza** tabelas já existentes. Apague o `tarefa.db` e rode `python app.py` de novo para recriá-lo do zero (isso apaga os dados).
-
-## Endpoints da API
-
-### Autenticação
+### Usuário (`auth_bp`, prefixo `/api`)
 
 | Método | Rota | Descrição |
 |---|---|---|
-| POST | `/api/register/` | Cadastra um novo usuário |
+| POST | `/api/register` | Cadastra um novo usuário |
 | POST | `/api/login` | Autentica o usuário e inicia a sessão |
 | POST | `/api/logout` | Encerra a sessão do usuário |
 
-**Exemplo de body — registro/login:**
-```json
-{
-  "nome": "ruant",
-  "senha": "123456"
-}
-```
-
-### Tarefas
-*(todas exigem estar logado — envie o cookie de sessão obtido no login)*
+### Página (`main_bp`)
 
 | Método | Rota | Descrição |
 |---|---|---|
-| GET | `/api/tasks` | Lista todas as tarefas do usuário logado |
-| GET | `/api/tasks/<id>` | Detalha uma tarefa específica |
-| POST | `/api/tasks/add` | Cria uma nova tarefa |
-| PUT | `/api/tasks/update/<id>` | Atualiza título, descrição e/ou status |
-| PATCH | `/api/tasks/<id>/completed` | Marca a tarefa como concluída |
+| GET | `/` | Renderiza a página principal (index.html) |
+
+### Tarefas (`tasks_bp`, prefixo `/api/tasks`)
+
+| Método | Rota | Descrição |
+|---|---|---|
+| GET | `/api/tasks/` | Lista as tarefas do usuário logado |
+| POST | `/api/tasks/add` | Adiciona uma nova tarefa |
+| GET | `/api/tasks/<id>` | Retorna os dados de uma tarefa específica |
+| PUT | `/api/tasks/update/<id>` | Atualiza título, descrição e/ou status de uma tarefa |
+| PATCH | `/api/tasks/<id>/completed` | Marca uma tarefa como concluída ou pendente |
 | DELETE | `/api/tasks/delete/<id>` | Remove uma tarefa |
 
-**Exemplo de body — criar tarefa:**
+Todas as rotas de tarefas exigem que o usuário esteja autenticado.
+
+### Exemplo de requisição
+
+**Adicionar tarefa**
 ```json
+POST /api/tasks/add
 {
-  "titulo": "Deploy",
-  "descricao": "Toda Segunda-Feira"
+  "titulo": "Estudar Flask",
+  "descricao": "Revisar rotas e templates"
 }
 ```
 
-## Segurança e isolamento por usuário
+**Resposta**
+```json
+{
+  "mensagem": "Tarefa adicionada com sucesso"
+}
+```
 
-Toda tarefa é vinculada ao usuário que a criou através da coluna `usuario_id`. As rotas usam `current_user` (fornecido pelo Flask-Login) para filtrar as consultas, garantindo que um usuário não visualize, edite ou apague tarefas de outro usuário.
+## Como funciona o front-end
+O `script.js` se comunica com as rotas registradas pelos blueprints usando `fetch()`. Cada ação do usuário na interface (adicionar, editar, concluir ou excluir tarefa) dispara uma requisição HTTP para a rota correspondente da API, que responde em formato JSON e atualiza a tela.

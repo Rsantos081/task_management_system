@@ -1,0 +1,36 @@
+import os 
+from flask import Flask
+from app.extensions import db, login_manager
+
+def create_app():
+    app = Flask(
+        __name__,
+        template_folder='../templates',
+        static_folder= '../static',
+    )
+    app.config = ['SQLALCHEMY_DATABASE_URI'] = 'sqlite://tarefa.db'
+    app.config = ['SECRET_KEY'] = os.getenv('SECRET_KEY')
+    
+    db.init_app(app)
+    login_manager.init(app)
+    login_manager.login_view = 'auth.login'
+    
+    from app.models import Usuario
+    
+    @login_manager.user_loader
+    def load_user(usuario_id):
+        return Usuario.query.get(int(usuario_id))
+    
+    from app.auth import auth_bp
+    from app.main import main_bp
+    from app.tasks import tasks_bp
+    
+    app.register_blueprint(auth_bp)
+    app.register_blueprint(main_bp)
+    app.register_blueprint(tasks_bp)
+    
+    with app.app_context():
+        db.create_all()
+        
+    return app
+    
