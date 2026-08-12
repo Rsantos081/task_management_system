@@ -8,11 +8,11 @@ def create_app():
         template_folder='../templates',
         static_folder= '../static',
     )
-    app.config = ['SQLALCHEMY_DATABASE_URI'] = 'sqlite://tarefa.db'
-    app.config = ['SECRET_KEY'] = os.getenv('SECRET_KEY')
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///tarefa.db'
+    app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
     
     db.init_app(app)
-    login_manager.init(app)
+    login_manager.init_app(app)
     login_manager.login_view = 'auth.login'
     
     from app.models import Usuario
